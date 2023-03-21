@@ -5,6 +5,6 @@ const connection = mysql.createConnection({
   user: process.env.USER_NAME,
   password: process.env.PASSWORD,
   database: process.env.DB_NAME,
-  connectTimeout: 60000,
+  connectTimeout: 30000,
 });
 module.exports = connection;
