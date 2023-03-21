@@ -8,7 +8,7 @@ const users = require("./users-conn.js");
 const connection = require("./db.js");
 
 const app = express();
-const POST = 3306;
+const POST = 3002;
 
 connection.connect();
 app.use(bodyParser.json());
