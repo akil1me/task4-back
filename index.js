@@ -10,7 +10,7 @@ const connection = require("./db.js");
 const app = express();
 const POST = process.env.PORT || 3001;
 
-app.use(express.json());
+connection.connect();
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
@@ -22,3 +22,4 @@ app.get("/users", users.onGet);
 app.listen(POST, () => {
   console.log(`Server listening at http://localhost:${POST}`);
 });
+connection.end();
