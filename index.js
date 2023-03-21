@@ -10,7 +10,7 @@ const connection = require("./db.js");
 const app = express();
 const POST = process.env.PORT || 3001;
 
-connection.connect();
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
