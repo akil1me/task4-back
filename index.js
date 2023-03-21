@@ -8,7 +8,7 @@ const users = require("./users-conn.js");
 const connection = require("./db.js");
 
 const app = express();
-const POST = process.env.PORT || 3001;
+const POST = 3306;
 
 connection.connect();
 app.use(bodyParser.json());
