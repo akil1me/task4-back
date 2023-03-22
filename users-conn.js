@@ -54,7 +54,10 @@ class Users {
                 "UPDATE users SET last_login_at = $1 WHERE users.id = $2",
                 [date, user.id]
               );
-              res.json({ email: user.email, token: token });
+              res.json({
+                user: { id: user.id, name: user.name, email: user.email },
+                token: token,
+              });
             } else {
               res.status(401).json({ message: "Invalid password" });
             }
