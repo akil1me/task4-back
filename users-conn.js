@@ -44,22 +44,27 @@ class Users {
           if (results.rows.length > 0) {
             const user = results.rows[0];
 
-            if (bcrypt.compareSync(password, user.password)) {
-              const token = jwt.sign({ id: user.id }, "secret-key", {
-                expiresIn: "1h",
-              });
-              res.cookie("token", token, { httpOnly: true });
-              const date = new Date();
-              pool.query(
-                "UPDATE users SET last_login_at = $1 WHERE users.id = $2",
-                [date, user.id]
-              );
-              res.json({
-                user: { id: user.id, name: user.name, email: user.email },
-                token: token,
-              });
+            if (user.status === "active") {
+              if (bcrypt.compareSync(password, user.password)) {
+                const token = jwt.sign({ id: user.id }, "secret-key", {
+                  expiresIn: "1h",
+                });
+                res.cookie("token", token, { httpOnly: true });
+                const date = new Date();
+                pool.query(
+                  "UPDATE users SET last_login_at = $1 WHERE users.id = $2",
+                  [date, user.id]
+                );
+                res.json({
+                  user: { id: user.id, name: user.name, email: user.email },
+                  token: token,
+                  status: user.status,
+                });
+              } else {
+                res.status(401).json({ message: "Invalid password" });
+              }
             } else {
-              res.status(401).json({ message: "Invalid password" });
+              res.status(401).json({ message: "User Blocked" });
             }
           } else {
             res.status(401).json({ message: "Invalid email" });
