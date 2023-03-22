@@ -11,7 +11,13 @@ class Users {
       [name, email, hashedPassword, new Date(), null, "active"],
       (error, results) => {
         if (error) {
-          res.status(500).json({ message: error });
+          if (error.code === "23505") {
+            res
+              .status(409)
+              .json({ message: "User with this email already exists" });
+          } else {
+            res.status(500).json({ message: error });
+          }
         } else {
           res.json(results);
         }
