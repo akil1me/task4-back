@@ -1,4 +1,4 @@
-const connection = require("./db.js");
+const pool = require("./pool.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -6,8 +6,8 @@ class Users {
   onRegister(req, res) {
     const { name, email, password } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
-    connection.query(
-      "INSERT INTO users (name, email, password, registered_at, last_login_at, status) VALUES (?, ?, ?, ?, ?, ?)",
+    pool.query(
+      "INSERT INTO users (name, email, password, registered_at, last_login_at, status) VALUES ($1, $2, $3, $4, $5, $6)",
       [name, email, hashedPassword, new Date(), null, "active"],
       (error, results) => {
         if (error) {
@@ -19,13 +19,13 @@ class Users {
     );
   }
   onGet(_, res) {
-    connection.query(
-      "SELECT `id`, `name`, `email`, `registered_at`, `last_login_at`, `status` FROM `users` WHERE 1",
+    pool.query(
+      "SELECT id, name, email, registered_at, last_login_at, status FROM users",
       (error, results) => {
         if (error) {
           res.status(500).json(error);
         } else {
-          const users = results;
+          const users = results.rows;
           res.json(users);
         }
       }
@@ -34,15 +34,15 @@ class Users {
 
   onLogin(req, res) {
     const { email, password } = req.body;
-    connection.query(
-      "SELECT * FROM users WHERE email = ?",
+    pool.query(
+      "SELECT * FROM users WHERE email = $1",
       [email],
       (error, results) => {
         if (error) {
           res.status(500).json({ message: "Error logging in" });
         } else {
-          if (results.length > 0) {
-            const user = results[0];
+          if (results.rows.length > 0) {
+            const user = results.rows[0];
 
             if (bcrypt.compareSync(password, user.password)) {
               const token = jwt.sign({ id: user.id }, "secret-key", {
@@ -50,11 +50,11 @@ class Users {
               });
               res.cookie("token", token, { httpOnly: true });
               const date = new Date();
-              connection.query(
-                `UPDATE users SET last_login_at = ? WHERE users.id = ${user.id}`,
-                [date]
+              pool.query(
+                "UPDATE users SET last_login_at = $1 WHERE users.id = $2",
+                [date, user.id]
               );
-              res.json(user);
+              res.json({ email: user.email, token: token });
             } else {
               res.status(401).json({ message: "Invalid password" });
             }
