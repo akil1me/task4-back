@@ -97,9 +97,9 @@ class Users {
   }
 
   onDelete(req, res) {
-    const { params } = req.body;
+    const id = req.body;
     pool.query(
-      `DELETE FROM users WHERE id IN (${params.join(",")})
+      `DELETE FROM users WHERE id IN (${id.join(",")})
     RETURNING *`,
       (error, results) => {
         if (error) {
