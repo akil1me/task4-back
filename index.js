@@ -16,6 +16,8 @@ app.use(cors());
 app.post("/register", users.onRegister);
 app.post("/login", users.onLogin);
 app.get("/users", users.onGet);
+app.delete("/users", users.onDelete);
+app.put("/users", users.onStatus);
 
 app.listen(POST, () => {
   console.log(`Server listening at http://localhost:${POST}`);

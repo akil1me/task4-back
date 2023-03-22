@@ -68,6 +68,37 @@ class Users {
       }
     );
   }
+
+  onStatus(req, res) {
+    const { status, id } = req.body;
+    console.log(id.join(","));
+    pool.query(
+      `UPDATE users SET status = $1 WHERE id IN (${id.join(",")}) RETURNING *`,
+      [`${status}`],
+      (error, results) => {
+        if (error) {
+          res.status(500).json({ message: error });
+        } else {
+          res.json(results);
+        }
+      }
+    );
+  }
+
+  onDelete(req, res) {
+    const id = req.body;
+    pool.query(
+      `DELETE FROM users WHERE id IN (${id.join(",")})
+    RETURNING *`,
+      (error, results) => {
+        if (error) {
+          res.status(500).json({ message: error });
+        } else {
+          res.json(results);
+        }
+      }
+    );
+  }
 }
 
 module.exports = new Users();
