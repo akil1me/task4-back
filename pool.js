@@ -2,11 +2,11 @@ const Pool = require("pg").Pool;
 require("dotenv").config();
 
 const pool = new Pool({
-  user: "akobir",
-  host: "dpg-cgdg8bl269v52g7nok10-a.oregon-postgres.render.com",
-  database: "akobirdb",
-  password: "GYUYH9hE89UTSBCkaHljG57BNqfCqcIW",
-  port: 5432,
+  host: process.env.HOST_NAME,
+  user: process.env.USER_NAME,
+  password: process.env.PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.PG_PORT,
   ssl: {
     rejectUnauthorized: false,
   },
